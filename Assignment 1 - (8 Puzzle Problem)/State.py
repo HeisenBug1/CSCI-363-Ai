@@ -101,3 +101,6 @@ class State:
 			return True
 		else:
 			return False
+
+	def costF(self):
+		return (self.h + self.g)

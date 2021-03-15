@@ -2,7 +2,7 @@ import time
 from State import *
 
 class aStar:
-	def __init__(self, goal, current, heuristic):
+	def __init__(self, goal, current, heuristic, limit):
 		self.goalState = State(goal, 0, 0, None)
 		self.currentState = State(current, 0, 0, None)
 		self.heuristic = heuristic
@@ -10,11 +10,10 @@ class aStar:
 			self.currentState.calcH_Man(self.goalState)
 		if self.heuristic == "disp":
 			self.currentState.calcH_Displacement(self.goalState)
-		# if self.heuristic is "man":
-		# if self.heuristic is "man":
 		self.open = []
 		self.closed = []
 		self.open.append(self.currentState)
+		self.limit = limit
 
 	def printState(self):
 		self.currentState.printState()
@@ -22,8 +21,8 @@ class aStar:
 	def checkNeighbors(self, curState, childState):
 		for neighbor in self.open:
 			if childState.isEqual(neighbor) is True:
-				cf = childState.g + childState.h
-				nf = neighbor.g + neighbor.h
+				cf = childState.costF()
+				nf = neighbor.costF()
 				if cf <= nf:	# this allows worst case to solve
 					# remove duplicates
 					self.open.remove(neighbor)
@@ -33,14 +32,15 @@ class aStar:
 		timer = time.time()
 		count = 0
 		goalReached = False
+		gCost = -1
 		while(goalReached is False):
+			if count == self.limit:	# limit
+				return ((time.time() - timer), count, gCost, self.closed)
 			count+=1
-			if count == 10000:
-				return ((time.time() - timer), count, curState.g)
 			curState = self.open.pop(0)
 			if curState.isEqual(self.goalState) is True:
 				goalReached = True
-				depth = curState.g
+				gCost = curState.g
 				while curState is not None:
 					self.closed.append(curState)
 					curState = curState.parent
@@ -49,4 +49,4 @@ class aStar:
 				for child in curState.getChildren(self.goalState, self.heuristic):
 					self.checkNeighbors(curState, child)
 				self.open.sort(key = lambda x : x.h + x.g)
-		return ((time.time() - timer), count, depth)
+		return ((time.time() - timer), count, gCost, self.closed)
