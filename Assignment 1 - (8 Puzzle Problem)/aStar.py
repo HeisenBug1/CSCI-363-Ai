@@ -23,7 +23,7 @@ class aStar:
 			if childState.isEqual(neighbor) is True:
 				cf = childState.costF()
 				nf = neighbor.costF()
-				if cf <= nf:	# this allows worst case to solve
+				if cf <= nf:	# this allows worst case to solve using Manhattan
 					# remove duplicates
 					self.open.remove(neighbor)
 		self.open.append(childState)
@@ -34,6 +34,8 @@ class aStar:
 		goalReached = False
 		gCost = -1
 		while(goalReached is False):
+			if (time.time() - timer >= 600):	# time limit 10 min
+				return ((time.time() - timer), count, gCost, self.closed)
 			if count == self.limit:	# limit
 				return ((time.time() - timer), count, gCost, self.closed)
 			count+=1
@@ -45,8 +47,8 @@ class aStar:
 					self.closed.append(curState)
 					curState = curState.parent
 				self.closed = self.closed[::-1]
+				return ((time.time() - timer), count, len(self.closed)-1, self.closed)
 			else:
 				for child in curState.getChildren(self.goalState, self.heuristic):
 					self.checkNeighbors(curState, child)
 				self.open.sort(key = lambda x : x.h + x.g)
-		return ((time.time() - timer), count, gCost, self.closed)

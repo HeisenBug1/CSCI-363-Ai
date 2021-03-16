@@ -8,14 +8,16 @@ class State:
 	def printState(self):
 		row = len(self.state)
 		col = len(self.state[0])
+		string = ""
 		for i in range(row):
 			for j in range(col):
 				x = self.state[i][j]
 				if x == 0:
-					print(" ", end=' ');
+					string +=("  ");
 				else:
-					print(x, end=' ');
-			print()
+					string +=(str(x) + " ");
+			string += '\n'
+		return string
 
 	# find a value in state
 	# returns x, y cordinate
@@ -52,16 +54,14 @@ class State:
 		return self.h
 
 	def calcH_Displacement(self, goal):
-		row = len(goal.state)
-		col = len(goal.state[0])
+		row = len(self.state)
+		col = len(self.state[0])
 		self.h = 0
 		for i in range(row):
 			for j in range(col):
-				if goal.state[i][j] != 0:
-					x,y = self.find(goal.state[i][j])
-					if(x != i and y != j):
+				if self.state[i][j] != 0:
+					if self.state[i][j] != goal.state[i][j]:
 						self.h += 1
-
 
 	# returns a list of new states
 	def getChildren(self, goal, heuristic):

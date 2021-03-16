@@ -43,16 +43,14 @@ class DFBB:
 					curState = curState.parent
 				self.closed = self.closed[::-1]
 				if self.ida is False:
-					return ((time.time() - timer), L, self.L, count, gCost, self.closed)
+					return ((time.time() - timer), L, self.L, count, len(self.closed)-1, self.closed)
 				else:
-					return ((time.time() - timer), minL, maxL, count, gCost, self.closed)
+					return ((time.time() - timer), minL, maxL, count, len(self.closed)-1, self.closed)
 			else:
 				childList = []
 				tempL = 9999999999
 				tempChild = None
-				# print("Parent: "+str(curState.costF()))
 				for child in curState.getChildren(self.goal, "man"):
-					# print("Child: "+str(child.costF()))
 					if tempL > child.costF():
 						tempL = child.costF()
 						tempChild = child
@@ -63,7 +61,7 @@ class DFBB:
 					if len(childList) > 0:
 						L = childList[0].costF()
 					else:
-						# print("FailSafe")
+						# ("FailSafe")
 						L = tempL
 						childList.append(tempChild)
 				for child in childList:
